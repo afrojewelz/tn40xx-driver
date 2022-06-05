@@ -32,9 +32,9 @@ MV88E2010_H   := MV88E2010_phy.h
 #
 # Jumbo options
 #
-ifneq ($(wildcard $(MV88X3120_HDR) $(MV88X3120_H)),)
+#ifneq ($(wildcard $(MV88X3120_HDR) $(MV88X3120_H)),)
 	export JUMBO_MV88X3120 := YES
-endif
+#endif
 ifeq ($(JUMBO_MV88X3120), YES)
 	JUMBO_OBJS += MV88X3120_phy.o MV88X3120_phy_Linux.o
 	JUMBO_PHYS += -DPHY_MV88X3120
