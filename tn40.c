@@ -1853,7 +1853,8 @@ static int bdx_set_mac(struct net_device *ndev, void *p)
 	   if (netif_running(dev))
 	   return -EBUSY
 	 */
-	memcpy(ndev->dev_addr, addr->sa_data, ndev->addr_len);
+	// memcpy(ndev->dev_addr, addr->sa_data, ndev->addr_len);
+	eth_hw_addr_set(ndev, addr->sa_data);
 	bdx_restore_mac(ndev, priv);
 	return 0;
 }
@@ -1861,7 +1862,7 @@ static int bdx_set_mac(struct net_device *ndev, void *p)
 static int bdx_read_mac(struct bdx_priv *priv)
 {
 	u16 macAddress[3], i;
-
+	u8 addr[ETH_ALEN];
 	macAddress[2] = READ_REG(priv, regUNC_MAC0_A);
 	macAddress[2] = READ_REG(priv, regUNC_MAC0_A);
 	macAddress[1] = READ_REG(priv, regUNC_MAC1_A);
@@ -1869,9 +1870,12 @@ static int bdx_read_mac(struct bdx_priv *priv)
 	macAddress[0] = READ_REG(priv, regUNC_MAC2_A);
 	macAddress[0] = READ_REG(priv, regUNC_MAC2_A);
 	for (i = 0; i < 3; i++) {
-		priv->ndev->dev_addr[i * 2 + 1] = macAddress[i];
-		priv->ndev->dev_addr[i * 2] = macAddress[i] >> 8;
+		// priv->ndev->dev_addr[i * 2 + 1] = macAddress[i];
+		// priv->ndev->dev_addr[i * 2] = macAddress[i] >> 8;
+		addr[i * 2 + 1] = macAddress[i];
+		addr[i * 2] = macAddress[i] >> 8;
 	}
+	eth_hw_addr_set(priv->ndev, addr);
 	return 0;
 }
 
@@ -4569,7 +4573,8 @@ static u32 bdx_get_tx_csum(struct net_device *netdev)
  * @ecoal
  */
 static int
-bdx_get_coalesce(struct net_device *netdev, struct ethtool_coalesce *ecoal)
+// bdx_get_coalesce(struct net_device *netdev, struct ethtool_coalesce *ecoal)
+bdx_get_coalesce(struct net_device *netdev, struct ethtool_coalesce *ecoal, struct kernel_ethtool_coalesce *kernel_coal, struct netlink_ext_ack *extack)
 {
 	u32 rdintcm;
 	u32 tdintcm;
@@ -4601,7 +4606,8 @@ bdx_get_coalesce(struct net_device *netdev, struct ethtool_coalesce *ecoal)
  * @ecoal
  */
 static int
-bdx_set_coalesce(struct net_device *netdev, struct ethtool_coalesce *ecoal)
+// bdx_set_coalesce(struct net_device *netdev, struct ethtool_coalesce *ecoal)
+bdx_set_coalesce(struct net_device *netdev, struct ethtool_coalesce *ecoal, struct kernel_ethtool_coalesce *kernel_coal, struct netlink_ext_ack *extack)
 {
 	u32 rdintcm;
 	u32 tdintcm;
@@ -4661,8 +4667,13 @@ static inline int bdx_tx_fifo_size_to_packets(int tx_size)
  * @netdev
  * @ring
  */
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 11, 0)
 static void
-bdx_get_ringparam(struct net_device *netdev, struct ethtool_ringparam *ring)
+// bdx_get_ringparam(struct net_device *netdev, struct ethtool_ringparam *ring)
+bdx_get_ringparam(struct net_device *netdev,
+		 struct ethtool_ringparam *ring,
+		 struct kernel_ethtool_ringparam *kernel_ering,
+		 struct netlink_ext_ack *extack)
 {
 	struct bdx_priv *priv = netdev_priv(netdev);
 
@@ -4672,15 +4683,20 @@ bdx_get_ringparam(struct net_device *netdev, struct ethtool_ringparam *ring)
 	ring->rx_pending = bdx_rx_fifo_size_to_packets(priv->rxf_size);
 	ring->tx_pending = bdx_tx_fifo_size_to_packets(priv->txd_size);
 }
-
+#endif
 /*
  * bdx_set_ringparam - Set ring sizes.
  *
  * @netdev
  * @ring
  */
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 11, 0)
 static int
-bdx_set_ringparam(struct net_device *netdev, struct ethtool_ringparam *ring)
+// bdx_set_ringparam(struct net_device *netdev, struct ethtool_ringparam *ring)
+bdx_set_ringparam(struct net_device *netdev,
+		 struct ethtool_ringparam *ring,
+		 struct kernel_ethtool_ringparam *kernel_ering,
+		 struct netlink_ext_ack *extack)
 {
 	struct bdx_priv *priv = netdev_priv(netdev);
 	int rx_size = 0;
@@ -4718,6 +4734,7 @@ bdx_set_ringparam(struct net_device *netdev, struct ethtool_ringparam *ring)
 	}
 	return 0;
 }
+#endif
 
 /*
  * bdx_get_strings - Return a set of strings that describe the requested
@@ -4962,8 +4979,10 @@ static void bdx_ethtool_ops(struct net_device *netdev)
 #endif		
 		.get_coalesce = bdx_get_coalesce,
 		.set_coalesce = bdx_set_coalesce,
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 11, 0)
 		.get_ringparam = bdx_get_ringparam,
 		.set_ringparam = bdx_set_ringparam,
+#endif
 #if defined(_EEE_) && (!defined(RHEL6_ETHTOOL_OPS_EXT_STRUCT))
 #ifdef ETHTOOL_GEEE
 		.get_eee = bdx_get_eee,

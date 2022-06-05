@@ -8,7 +8,8 @@
 #######################################
 
 PWD           := $(shell pwd)
-KVERSION      := $(shell uname -r)
+# KVERSION      := $(shell uname -r)
+KVERSION      ?= $(shell uname -r)
 EXPECTED_KDIR := /lib/modules/$(KVERSION)/build
 OLDINSTDIR       := /lib/modules/$(KVERSION)/kernel/drivers/net
 INSTDIR          := /lib/modules/$(KVERSION)/kernel/drivers/net/tehuti
@@ -25,7 +26,7 @@ DRV_OBJS      := tn40.o CX4.o CX4_Linux.o
 RESUME 		  ?= YES
 MV88X3120_HDR := 88X3140-FW-R02-06-03.hdr
 MV88X3120_H	  := MV88X3120_phy.h
-MV88X3310_HDR := x3310fw_0_3_4_0_9445.hdr
+MV88X3310_HDR := x3310fw_0_3_10_0_10860.hdr
 MV88X3310_H   := MV88X3310_phy.h
 MV88E2010_HDR := e2010fw_0_3_4_0_9445.hdr
 MV88E2010_H   := MV88E2010_phy.h
@@ -40,9 +41,10 @@ ifeq ($(JUMBO_MV88X3120), YES)
 	JUMBO_PHYS += -DPHY_MV88X3120
 endif
 #
-ifneq ($(wildcard $(MV88X3310_HDR) $(MV88X3310_H)),) 
-	export JUMBO_MV88X3310 := YES
-endif
+# ifneq ($(wildcard $(MV88X3310_HDR) $(MV88X3310_H)),) 
+export JUMBO_MV88X3310 := YES
+# endif
+
 ifeq ($(JUMBO_MV88X3310), YES) 
 	JUMBO_OBJS += MV88X3310_phy.o MV88X3310_phy_Linux.o
 	JUMBO_PHYS += -DPHY_MV88X3310
