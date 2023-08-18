@@ -4960,8 +4960,10 @@ static void bdx_ethtool_ops(struct net_device *netdev)
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 7, 0)
 		.supported_coalesce_params = ETHTOOL_COALESCE_USECS,
 #endif		
-		.get_coalesce = bdx_get_coalesce,
-		.set_coalesce = bdx_set_coalesce,
+/*/*	
+*		.get_coalesce = bdx_get_coalesce,
+*		.set_coalesce = bdx_set_coalesce,
+* */		
 		.get_ringparam = bdx_get_ringparam,
 		.set_ringparam = bdx_set_ringparam,
 #if defined(_EEE_) && (!defined(RHEL6_ETHTOOL_OPS_EXT_STRUCT))
