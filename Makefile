@@ -24,8 +24,8 @@ JUMBO_PHYS    := -DPHY_QT2025 -DPHY_TLK10232 -DPHY_AQR105 -DPHY_MUSTANG
 DRV_NAME      := tn40xx
 DRV_OBJS      := tn40.o CX4.o CX4_Linux.o
 RESUME 		  ?= YES
-MV88X3120_HDR := 88X3140-FW-R02-06-03.hdr
-MV88X3120_H	  := MV88X3120_phy.h
+# MV88X3120_HDR := 88X3140-FW-R02-06-03.hdr
+# MV88X3120_H	  := MV88X3120_phy.h
 MV88X3310_HDR := x3310fw_0_3_10_0_10860.hdr
 MV88X3310_H   := MV88X3310_phy.h
 MV88E2010_HDR := e2010fw_0_3_4_0_9445.hdr
@@ -33,13 +33,13 @@ MV88E2010_H   := MV88E2010_phy.h
 #
 # Jumbo options
 #
-ifneq ($(wildcard $(MV88X3120_HDR) $(MV88X3120_H)),)
-	export JUMBO_MV88X3120 := YES
-endif
-ifeq ($(JUMBO_MV88X3120), YES)
-	JUMBO_OBJS += MV88X3120_phy.o MV88X3120_phy_Linux.o
-	JUMBO_PHYS += -DPHY_MV88X3120
-endif
+# ifneq ($(wildcard $(MV88X3120_HDR) $(MV88X3120_H)),)
+# 	export JUMBO_MV88X3120 := YES
+# endif
+# ifeq ($(JUMBO_MV88X3120), YES)
+# 	JUMBO_OBJS += MV88X3120_phy.o MV88X3120_phy_Linux.o
+# 	JUMBO_PHYS += -DPHY_MV88X3120
+# endif
 #
 # ifneq ($(wildcard $(MV88X3310_HDR) $(MV88X3310_H)),) 
 export JUMBO_MV88X3310 := YES
@@ -62,10 +62,10 @@ endif
 #
 # Command line options
 #
-ifeq ($(MV88X3120),YES)
-	DRV_OBJS += MV88X3120_phy.o MV88X3120_phy_Linux.o
-	OPT_PHYS += -DPHY_MV88X3120
-endif
+# ifeq ($(MV88X3120),YES)
+# 	DRV_OBJS += MV88X3120_phy.o MV88X3120_phy_Linux.o
+# 	OPT_PHYS += -DPHY_MV88X3120
+# endif
 #
 ifeq ($(MV88X3310),YES)
 	DRV_OBJS += MV88X3310_phy.o MV88X3310_phy_Linux.o
@@ -153,13 +153,13 @@ all: clean headers
 		touch  $(RESUME_FILE); \
 	fi
 
-headers: $(MV88X3120_H) $(MV88X3310_H) $(MV88E2010_H)
+headers: $(MV88X3310_H) $(MV88E2010_H) # $(MV88X3120_H)
 
-$(MV88X3120_H): $(wildcard $(MV88X3120_HDR))
-	@if [ -f $(MV88X3120_HDR) ]; then \
-		echo Generating $(MV88X3120_H); \
-		./mvidtoh.sh $(MV88X3120_HDR) MV88X3120 $(MV88X3120_H); \
-	fi
+# $(MV88X3120_H): $(wildcard $(MV88X3120_HDR))
+# 	@if [ -f $(MV88X3120_HDR) ]; then \
+# 		echo Generating $(MV88X3120_H); \
+# 		./mvidtoh.sh $(MV88X3120_HDR) MV88X3120 $(MV88X3120_H); \
+# 	fi
 
 $(MV88X3310_H): $(wildcard $(MV88X3310_HDR))
 	@if [ -f $(MV88X3310_HDR) ]; then \
