@@ -926,7 +926,7 @@ struct txf_desc {
 #define LUXOR__NAPI_ENABLE(napi)    napi_enable(napi)
 #define LUXOR__NAPI_DISABLE(napi)   napi_disable(napi)
 #define LUXOR__NAPI_ADD(dev, napi, poll, weight) \
-                  netif_napi_add(dev, napi, poll, weight)
+                  netif_napi_add(dev, napi, poll) /* remove wight for kernel 6.2.0-31-generic ubuntu for install */, weight)*/
 #else
 #define LUXOR__SCHEDULE_PREP(napi, dev) netif_rx_schedule_prep(dev)
 #define LUXOR__SCHEDULE(napi, dev)  __netif_rx_schedule(dev)
