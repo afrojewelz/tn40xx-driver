@@ -4,7 +4,7 @@ Dynamic Kernel Module Support (DKMS) builds Linux kernel modules whose sources r
 
 install
 =======
-    git clone -b release/tn40xx-006 https://github.com/acooks/tn40xx-driver.git /usr/src/tn40xx-006
+    git clone -b release/tn40xx-006 https://github.com/afrojewelz/tn40xx-driver.git /usr/src/tn40xx-006
     dkms add -m tn40xx -v 006
 
 build driver for current kernel
@@ -13,8 +13,7 @@ build driver for current kernel
 
 build driver for specific kernel version
 ========================================
-    dkms install -m tn40xx -v 006 -k [kernel_version]
-
+    dkms install -m tn40xx -v 006 -k $(uname -r)
 uninstall
 =========
 This will remove module for all kernel versions
